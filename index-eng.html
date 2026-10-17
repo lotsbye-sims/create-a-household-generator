@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sims Move-In Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Courier+Prime:wght@400;700&display=swap">
+<style>
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+
+/* Layout: household registration card next to the address card with the lot; stacked on phones */
+:root {
+  --bg: #E4EAEC;
+  --card: #F8FAF9;
+  --ink: #1C2A38;
+  --muted: #586774;
+  --rule: #A6B6C0;
+  --stamp: #5A3E9E;
+  --shadow: #C9D3D8;
+  --f-label: 'Archivo', 'Arial Narrow', system-ui, sans-serif;
+  --f-type: 'Courier Prime', 'Courier New', ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111820; --card: #19222C; --ink: #DCE4EA; --muted: #93A2AE;
+    --rule: #3A4A58; --stamp: #B19CEB; --shadow: #0A0F14; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111820; --card: #19222C; --ink: #DCE4EA; --muted: #93A2AE;
+  --rule: #3A4A58; --stamp: #B19CEB; --shadow: #0A0F14; color-scheme: dark;
+}
+
+body { background: var(--bg); color: var(--ink); font-family: var(--f-label); font-size: 15px; line-height: 1.45; }
+.wrap { max-width: 74rem; margin: 0 auto; padding-inline: clamp(16px, 4vw, 40px); padding-block: 2rem 4rem; display: grid; gap: 1.25rem; }
+
+.eyebrow, .label, .ctl label, .packs summary, .section-bar h3 {
+  text-transform: uppercase; letter-spacing: .12em; font-stretch: 85%; color: var(--muted); font-size: .72rem; font-weight: 600; margin: 0;
+}
+h1 { font-stretch: 68%; font-weight: 800; text-transform: uppercase; font-size: clamp(2.4rem, 7vw, 4rem); line-height: .92; margin: .35rem 0 .6rem; letter-spacing: .005em; text-wrap: balance; }
+.lede { max-width: 58ch; color: var(--muted); margin: 0; font-size: 1rem; }
+
+.toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: .9rem 1.1rem; padding-block: 1rem; border-top: 3px double var(--ink); border-bottom: 1px solid var(--rule); }
+.ctl { display: grid; gap: .3rem; min-width: 0; }
+select {
+  font: 600 .95rem var(--f-label); color: var(--ink); background: var(--card);
+  border: 1px solid var(--ink); border-radius: 3px; padding: .5rem .6rem; min-width: 11rem; max-width: 100%;
+}
+.actions { margin-left: auto; display: flex; flex-wrap: wrap; gap: .5rem; }
+@media (max-width: 640px) { .actions { margin-left: 0; width: 100%; } .actions .btn { flex: 1 1 auto; } select { min-width: 0; width: 100%; } .ctl { flex: 1 1 9rem; } }
+
+.btn {
+  font: 700 .8rem var(--f-label); font-stretch: 85%; text-transform: uppercase; letter-spacing: .07em;
+  padding: .62rem 1rem; border: 1px solid var(--ink); border-radius: 3px; background: transparent; color: var(--ink); cursor: pointer;
+}
+.btn:hover { background: var(--shadow); }
+.btn.primary { background: var(--ink); color: var(--card); }
+.btn.primary:hover { opacity: .88; }
+.btn.small { padding: .42rem .7rem; font-size: .72rem; }
+:focus-visible { outline: 2px solid var(--stamp); outline-offset: 2px; }
+
+.note { margin: 0; font-family: var(--f-type); font-size: .9rem; color: var(--stamp); }
+#copyFallback { width: 100%; min-height: 11rem; font: .85rem var(--f-type); color: var(--ink); background: var(--card); border: 1px solid var(--rule); padding: .7rem; box-sizing: border-box; }
+
+.packs { border: 1px solid var(--rule); border-radius: 3px; background: var(--card); padding: .75rem 1rem; }
+.packs summary { cursor: pointer; color: var(--ink); }
+.packs summary span { color: var(--muted); }
+.pack-body { display: grid; gap: 1rem; padding-top: .9rem; }
+.pack-group h4 { margin: 0 0 .45rem; font-size: .8rem; font-weight: 700; font-stretch: 85%; }
+.pack-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr)); gap: .3rem .9rem; }
+.pack-grid label { display: flex; gap: .45rem; align-items: center; font-size: .9rem; cursor: pointer; }
+input[type="checkbox"] { accent-color: var(--stamp); width: 1rem; height: 1rem; }
+.pack-tools { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.pack-tools p { margin: 0; color: var(--muted); font-size: .85rem; }
+
+.sheet { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+@media (max-width: 880px) { .sheet { grid-template-columns: minmax(0, 1fr); } }
+
+.card { background: var(--card); border: 1px solid var(--rule); box-shadow: 4px 4px 0 var(--shadow); padding: 1.25rem 1.4rem 1.4rem; display: grid; gap: 1rem; min-width: 0; }
+@media (max-width: 480px) { .card { padding: 1rem; } }
+.card-head { display: flex; justify-content: space-between; align-items: start; gap: 1rem; padding-bottom: .9rem; border-bottom: 3px double var(--ink); }
+.card-head > div { min-width: 0; }
+h2 { margin: .25rem 0 0; font-weight: 800; font-stretch: 75%; font-size: 1.85rem; line-height: 1.05; text-wrap: balance; }
+.sub { margin: .3rem 0 0; font-family: var(--f-type); color: var(--muted); }
+#serial { font-family: var(--f-type); letter-spacing: 0; text-transform: none; font-size: .85rem; font-variant-numeric: tabular-nums; }
+
+.stamp {
+  flex: none; display: grid; place-items: center; gap: .1rem; text-align: center;
+  border: 3px double var(--stamp); color: var(--stamp); padding: .4rem .7rem; border-radius: 4px;
+  transform: rotate(-7deg); font-weight: 800; font-stretch: 70%; text-transform: uppercase; letter-spacing: .14em; font-size: .9rem; line-height: 1.1;
+  opacity: .9;
+}
+.stamp span { font: 700 .75rem var(--f-type); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+.stamp.thunk { animation: thunk .35s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes thunk { 0% { transform: rotate(-14deg) scale(1.5); opacity: .2; } 100% { transform: rotate(-7deg) scale(1); opacity: .9; } }
+
+.fields { margin: 0; display: grid; }
+.fields > div { display: grid; grid-template-columns: 10.5rem minmax(0, 1fr); gap: .3rem 1rem; padding-block: .55rem; border-bottom: 1px dashed var(--rule); }
+.fields dt { text-transform: uppercase; letter-spacing: .1em; font-stretch: 85%; font-size: .7rem; font-weight: 600; color: var(--muted); padding-top: .2rem; }
+.fields dd { margin: 0; font-family: var(--f-type); font-size: 1rem; min-width: 0; }
+.lot .fields > div, .story.fields > div { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 600px) { .story.fields > div { grid-template-columns: 10.5rem minmax(0, 1fr); } }
+.fields dd small { color: var(--muted); font-size: .85rem; }
+
+.section-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .6rem; padding-top: .3rem; }
+.mini-actions { display: flex; flex-wrap: wrap; gap: .4rem; }
+
+.members { list-style: none; margin: 0; padding: 0; display: grid; }
+.member {
+  display: grid; grid-template-columns: 1.8rem minmax(0, 1.1fr) minmax(0, 1.5fr) auto;
+  grid-template-areas: "lp who traits btn" "lp extra extra extra";
+  gap: .35rem .9rem; padding-block: .8rem; border-bottom: 1px solid var(--rule); align-items: start;
+}
+.member:last-child { border-bottom: 0; }
+@media (max-width: 600px) {
+  .member { grid-template-columns: 1.6rem minmax(0, 1fr) auto; grid-template-areas: "lp who btn" "lp traits traits" "lp extra extra"; }
+}
+.lp { grid-area: lp; font-family: var(--f-type); color: var(--muted); padding-top: .1rem; font-variant-numeric: tabular-nums; }
+.who { grid-area: who; display: grid; gap: .1rem; min-width: 0; }
+.name { font: 700 1.05rem var(--f-type); }
+.role { font-size: .74rem; text-transform: uppercase; letter-spacing: .07em; font-stretch: 85%; color: var(--muted); font-weight: 600; }
+.traits { grid-area: traits; display: flex; flex-wrap: wrap; gap: .3rem; align-content: start; min-width: 0; }
+.chip { font-weight: 650; font-stretch: 85%; font-size: .8rem; padding: .14rem .5rem; border: 1px solid var(--ink); border-radius: 2px; white-space: nowrap; }
+.chip.hard { border-style: dashed; border-color: var(--stamp); color: var(--stamp); }
+.extra { grid-area: extra; margin: 0; font-family: var(--f-type); font-size: .86rem; color: var(--muted); }
+.extra b { color: var(--ink); font-weight: 400; }
+.icon-btn {
+  grid-area: btn; width: 2.1rem; height: 2.1rem; border-radius: 50%; border: 1px solid var(--rule); background: transparent; color: var(--ink);
+  font-size: 1.05rem; line-height: 1; cursor: pointer; display: grid; place-items: center;
+}
+.icon-btn:hover { border-color: var(--ink); }
+
+.lot .btn { justify-self: start; }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 8px);
+  background: var(--ink); color: var(--card); padding: .55rem 1rem; border-radius: 3px; font-size: .85rem; font-weight: 600;
+  opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp.thunk { animation: none; }
+  .toast { transition: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">A random generator for The Sims 4</p>
+    <h1>Sims Move-In Card</h1>
+    <p class="lede">Rolls a household, traits for everyone who lives there, and the lot they move into. Reroll any part on its own, or one Sim's traits with the ↻ button.</p>
+  </header>
+
+  <form class="toolbar" id="toolbar">
+    <div class="ctl">
+      <label for="typeSel">Household type</label>
+      <select id="typeSel"></select>
+    </div>
+    <div class="ctl">
+      <label for="sizeSel">Household size</label>
+      <select id="sizeSel"></select>
+    </div>
+    <div class="ctl">
+      <label for="nameSel">Name style</label>
+      <select id="nameSel"></select>
+    </div>
+    <div class="actions">
+      <button type="submit" class="btn primary">New household</button>
+      <button type="button" class="btn" id="copyBtn">Copy as text</button>
+    </div>
+  </form>
+  <p class="note" id="note" hidden></p>
+  <textarea id="copyFallback" readonly hidden aria-label="Household as text"></textarea>
+
+  <details class="packs" id="packs">
+    <summary>My packs <span id="packCount"></span></summary>
+    <div class="pack-body">
+      <div class="pack-tools">
+        <button type="button" class="btn small" id="packsAll">Select all</button>
+        <button type="button" class="btn small" id="packsNone">Clear all</button>
+        <p>Untick the packs you don't own. Changes apply from the next roll.</p>
+      </div>
+      <div id="packGroups" class="pack-body"></div>
+    </div>
+  </details>
+
+  <main class="sheet">
+    <section class="card household" aria-labelledby="hhTitle">
+      <div class="card-head">
+        <div>
+          <p class="label">Household registration <span id="serial"></span></p>
+          <h2 id="hhTitle"></h2>
+          <p class="sub" id="hhType"></p>
+        </div>
+        <div class="stamp" id="stamp">Moved in<span id="stampDate"></span></div>
+      </div>
+      <dl class="fields story" id="story"></dl>
+      <div class="section-bar">
+        <h3>Residents</h3>
+        <div class="mini-actions">
+          <button type="button" class="btn small" id="rerollFamily">Reroll household</button>
+          <button type="button" class="btn small" id="rerollTraits">Reroll all traits</button>
+        </div>
+      </div>
+      <ol class="members" id="members"></ol>
+    </section>
+
+    <section class="card lot" aria-labelledby="lotWorld">
+      <div class="card-head">
+        <div>
+          <p class="label">Registered address</p>
+          <h2 id="lotWorld"></h2>
+          <p class="sub" id="lotPack"></p>
+        </div>
+      </div>
+      <dl class="fields" id="lotFields"></dl>
+      <button type="button" class="btn small" id="rerollLot">Reroll lot</button>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script>
+/* ===== DATA (add more entries to any list) ===== */
+
+const PACKS = [
+  { id: 'gt', name: 'Get Together', g: 'Expansion Packs' },
+  { id: 'city', name: 'City Living', g: 'Expansion Packs' },
+  { id: 'cats', name: 'Cats & Dogs', g: 'Expansion Packs' },
+  { id: 'famous', name: 'Get Famous', g: 'Expansion Packs' },
+  { id: 'island', name: 'Island Living', g: 'Expansion Packs' },
+  { id: 'uni', name: 'Discover University', g: 'Expansion Packs' },
+  { id: 'eco', name: 'Eco Lifestyle', g: 'Expansion Packs' },
+  { id: 'snowy', name: 'Snowy Escape', g: 'Expansion Packs' },
+  { id: 'cottage', name: 'Cottage Living', g: 'Expansion Packs' },
+  { id: 'hsy', name: 'High School Years', g: 'Expansion Packs' },
+  { id: 'growing', name: 'Growing Together', g: 'Expansion Packs' },
+  { id: 'horse', name: 'Horse Ranch', g: 'Expansion Packs' },
+  { id: 'rent', name: 'For Rent', g: 'Expansion Packs' },
+  { id: 'love', name: 'Lovestruck', g: 'Expansion Packs' },
+  { id: 'lifedeath', name: 'Life & Death', g: 'Expansion Packs' },
+  { id: 'biz', name: 'Businesses & Hobbies', g: 'Expansion Packs' },
+  { id: 'nature', name: 'Enchanted by Nature', g: 'Expansion Packs' },
+  { id: 'vamp', name: 'Vampires', g: 'Game Packs' },
+  { id: 'magic', name: 'Realm of Magic', g: 'Game Packs' },
+  { id: 'strange', name: 'StrangerVille', g: 'Game Packs' },
+  { id: 'wedding', name: 'My Wedding Stories', g: 'Game Packs' },
+  { id: 'wolves', name: 'Werewolves', g: 'Game Packs' },
+  { id: 'paranormal', name: 'Paranormal Stuff', g: 'Stuff Packs' },
+];
+
+const BASE_TRAITS = ['Active','Ambitious','Art Lover','Bookworm','Bro','Cheerful','Childish','Clumsy','Creative','Erratic','Evil','Family-Oriented','Foodie','Geek','Genius','Glutton','Gloomy','Good','Goofball','Hates Children','Hot-Headed','Jealous','Kleptomaniac','Lazy','Loner','Loves Outdoors','Materialistic','Mean','Music Lover','Neat','Noncommittal','Outgoing','Perfectionist','Romantic','Self-Assured','Slob','Snob','Squeamish','Unflirty','Vegetarian'];
+const PACK_TRAITS = [
+  ['Dance Machine','gt'], ['Insider','gt'], ['Cat Lover','cats'], ['Dog Lover','cats'],
+  ['Child of the Islands','island'], ['Freegan','eco'], ['Green Fiend','eco'], ['Maker','eco'], ['Recycle Disciple','eco'],
+  ['Adventurous','snowy'], ['Proper','snowy'], ['Animal Enthusiast','cottage'], ['Lactose Intolerant','cottage'], ['Paranoid','strange'],
+];
+const ALL_TRAITS = BASE_TRAITS.map(n => ({ n, p: null })).concat(PACK_TRAITS.map(([n, p]) => ({ n, p })));
+const INFANT_TRAITS = ['Calm','Cautious','Intense','Sensitive','Sunny','Wiggly'];
+const TODDLER_TRAITS = ['Angelic','Charmer','Clingy','Fussy','Independent','Inquisitive','Silly','Wild'];
+/* Traits a child won't get. Simplified list. */
+const ADULT_ONLY = new Set(['Ambitious','Romantic','Unflirty','Noncommittal','Jealous','Family-Oriented','Hates Children','Childish','Bro','Dance Machine','Insider']);
+const CONFLICTS = [['Neat','Slob'],['Good','Evil'],['Good','Mean'],['Cheerful','Gloomy'],['Active','Lazy'],['Loner','Outgoing'],['Loner','Insider'],['Family-Oriented','Hates Children'],['Romantic','Unflirty']];
+const TRAIT_COUNT = { infant: 1, toddler: 1, child: 1, teen: 2, ya: 3, adult: 3, elder: 3 };
+
+const WORLDS = [
+  ['Willow Creek', null], ['Oasis Springs', null], ['Newcrest', null],
+  ['Windenburg','gt'], ['San Myshuno','city'], ['Brindleton Bay','cats'], ['Del Sol Valley','famous'],
+  ['Sulani','island'], ['Britechester','uni'], ['Evergreen Harbor','eco'], ['Mt. Komorebi','snowy'],
+  ['Henford-on-Bagley','cottage'], ['Copperdale','hsy'], ['San Sequoia','growing'], ['Chestnut Ridge','horse'],
+  ['Tomarang','rent'], ['Ciudad Enamorada','love'], ['Ravenwood','lifedeath'], ['Nordhaven','biz'], ['Innisgreen','nature'],
+  ['Forgotten Hollow','vamp'], ['Glimmerbrook','magic'], ['StrangerVille','strange'], ['Tartosa','wedding'], ['Moonwood Mill','wolves'],
+];
+const LOT_TRAITS = [
+  ["Chef's Kitchen", null], ['Convivial', null], ['Fast Internet', null], ['Great Acoustics', null], ['Home Studio', null],
+  ['Natural Light', null], ['Quiet', null], ['Romantic Aura', null], ['Science Lair', null], ['Sunny Aspect', null], ['Penny Pixies', null],
+  ['Cat Friendly','cats'], ['Dog Friendly','cats'], ['Islander Culture','island'],
+];
+const LOT_HARD = [['Gremlins', null], ['Grody', null], ['Mean Vibe', null], ['Haunted','paranormal'], ['Off-the-Grid','eco'], ['Simple Living','cottage']];
+const LOT_SIZES = ['20×15','20×20','30×20','30×30','40×30','40×40','50×50','64×64'];
+const BUDGETS = [20000, 35000, 50000, 75000, 120000];
+const BUILDINGS = [
+  'narrow-fronted brick townhouse', 'modern box with a flat roof', '1970s house with dark wood paneling',
+  'Victorian house with a turret', 'timber cabin with a big porch', 'L-shaped bungalow',
+  'converted old workshop', 'house with a conservatory', 'semi-detached house with the other half empty',
+  'manor with columns at the entrance', 'house on a long, narrow lot', 'cottage with an attic and dormer windows',
+];
+const CONDITIONS = [
+  'empty lot, you build from scratch',
+  'move-in ready house, no renovating during the first week',
+  'fixer-upper, the outer walls stay',
+  "left behind by the previous owners, one of their items has to stay",
+  'start with one room and add another after every promotion',
+];
+
+const STORY = {
+  reason: [
+    'an inheritance from a distant aunt nobody had ever met', 'getting away from the gossip in the old neighborhood',
+    'a lottery win nobody had heard about', 'the lease ran out and they had one week to find a new place',
+    'coming back to their hometown after years abroad', 'the family bakery went bankrupt',
+    'a new job on the other side of the country', 'a house bought online, sight unseen',
+    'needing some quiet after years in the city center', 'a fire in the old apartment (nobody admits who left the oven on)',
+  ],
+  secret: [
+    'someone is hiding how much money they really have', 'two of them haven\'t spoken in a month and nobody remembers why',
+    'someone is secretly writing a book about the neighbors', 'there are boxes in the basement nobody wants to open',
+    'someone goes out every night and won\'t say where', 'an old debt to the neighbor over the fence',
+    'a fight over the family pie recipe', 'a letter addressed to the previous owners that nobody passed on',
+  ],
+  plan: [
+    'the best garden on the street', 'a small business run out of the garage', 'paying off a debt without borrowing from family',
+    'one family dinner a week, no phones', 'adding a second floor', 'a promotion for someone in the house',
+    'the first family vacation', 'knowing everyone on the street by name',
+  ],
+};
+const STYLES = ['casual','formal','athletic','vintage','goth','boho','streetwear','preppy','punk','minimalist','western','romantic'];
+const LIKES = ['cooking','baking','painting','photography','guitar','piano','programming','video games','fishing','gardening','writing','chess','fitness','dancing','handiness','mischief','comedy','gossip','cleaning','reading','singing'];
+const COLORS = ['red','orange','yellow','green','blue','purple','pink','black','white','brown','gray','teal'];
+
+const NAME_SETS = {
+  edgy: {
+    label: 'Edgy',
+    f: ['Ember','Harlow','Indie','Ramona','Willow','Roxie','Sloane','Maren','Juno','Beatrix','Marley','Esme','Dominique','Sheena','Quinn','Odessa','Cove','Avery','Tate','Journey','Scarlett','Petra','Bridget','Leni','Saylor','Tessa','Maxine','Gemma','Karlie','Ruby','Soleil','Temperance','Rhiannon','Alix','Edie','River','Harley','Ginger','Story','Nova'],
+    m: ['Kyler','Axel','Jagger','Phoenix','Kane','Halston','Drake','Maddox','Gage','Valen','Ryker','Cooper','Bronx','Crew','Dexter','Tyson','Onyx','Leonidas','Zion','Jericho','Rocco','Maximillian','Joaquin','Bruno','Farris','Neo','River','Cannon','Knox','Baron','Saint','Griffin','Kenji','Justice','Solomon','Roman','Ledger','Atlas','Zayn','Carver'],
+  },
+  classic: {
+    label: 'Classic (vintage, old money)',
+    f: ['Anne','Cordelia','Clarissa','Florence','Dorothy','Arabella','Anna','Beatrice','Agatha','Constance','Angela','Meredith','Dinah','Lorraine','Catherine','Penelope','Doris','Madeleine','Margaret','Agnes','Brigid','Victoria','Audrey','Eloise','Claire','Genevieve','Celine','Rosalind','Clara','Vivienne','Georgiana','Elizabeth','Annabelle','Blythe','Josephine','Blaire','Octavia'],
+    m: ['Clive','Conrad','Dashiell','Vernon','Eddie','Linus','Maurice','Rufus','Sylvester','Augustus','Isidore','Niall','Marshall','Cornelius','Carlisle','Sidney','Elwood','Orville','Robin','Murray','Bertram','Maxim','Laurent','Earl','Reggie','Anton','Clyde','Wilfred','Fraser','Orson','Phineas','Osmond','Wallace','Fabian','Mordecai','Hans','Seymour','Sylvain','Elton','Floyd','Erwin','Digby','Guthrie','Oswald','Angus','Boyd','Ernest','Lenny','Rasmus','Enzo','Bertrand','Fergus','Basil','Gulliver','Percy','Edgar','Darius','Leland','Rupert','Edward','Edmund','Arthur','Andrew','Alastor','Charles','Benjamin','Archibald','Everett','Byron','Christopher','Bradford','Ambrose','Alexander','Cameron','Astor','David','Elliot','Daniel'],
+  },
+};
+const SURNAMES = ['Campbell','Driscoll','Robinson','Lloyd','Clarke','Kelly','Jones','Moore','Anderson','Rodriguez','Martinez','Hawksley','Golding','Windlow','Holloway','Fenlon','Lennox','Blackwood','Presley','Mayfield','Hughes','Perry','Thompson','Cunningham','Densmore','Farrel',
+  'Graves','Halley','Easterwood','Chamberlain','Bellwood','Bradbury','Santiago','Torres','Kennedy','Graham','Rutherford','Heisenberg','Wright','Lister','Harrison','Fitz','Johanson','Bernard','Travers','Laurent','Farrington','Lohengrin','Fauntleroy','Burroughs','Thornton','Abbot','Berkshire',
+  'Burkeley','Lemington','Lexington','Haywood','Rigby','Frittenden','Reyes','Perez','Palmer','Ellis','Evans','Diaz','Reed','Hamilton','Green','Redd','Walker','Bailey','Crawford','Blandon','Severight','Sanchez','Quinn','Paterson','Partridge','Durnam','Beverleigh',
+  'Ermington','Ryde','Grason','Holroyd','Bexley','Belmore','Pankhurst','Crowell','Wallace','Powell',"O'Brien",'Watts','Donovan','Whitlock','Haven','Darley','Doyle','Russell','Clemonte','Stryker','Sheffield','Kline','Heist','Briven','Herst','Benson','Rosenheim',
+  'Sinclair','Montgomery','Spencer','Pembroke','Sterling','Carmichael','Beaumont','Wellington','Prescott','Fitzgerald'];
+function namePool(g) {
+  const s = ($('#nameSel') || {}).value || 'mix';
+  const sets = NAME_SETS[s] ? [NAME_SETS[s]] : Object.values(NAME_SETS);
+  return [...new Set(sets.flatMap(x => x[g]))];
+}
+
+const TYPES = {
+  single:    { label: 'Single', min: 1, max: 1 },
+  couple:    { label: 'Couple', min: 2, max: 2 },
+  family:    { label: 'Family with kids', min: 3, max: 8 },
+  parent:    { label: 'Single parent', min: 2, max: 6 },
+  multi:     { label: 'Multigenerational family', min: 3, max: 8 },
+  roommates: { label: 'Roommates', min: 2, max: 4 },
+  siblings:  { label: 'Siblings on their own', min: 2, max: 6 },
+  elders:    { label: 'Elderly couple', min: 2, max: 3 },
+};
+const ROLES = {
+  parent: ['Mom','Dad'], child: ['Daughter','Son'], grand: ['Grandma','Grandpa'], partner: ['Partner','Partner'],
+  tenant: ['Resident','Resident'], mate: ['Roommate','Roommate'], eldest: ['Eldest sister','Eldest brother'], sib: ['Sister','Brother'],
+};
+const STAGES = { infant: 'Infant', toddler: 'Toddler', child: 'Child', teen: 'Teen', ya: 'Young Adult', adult: 'Adult', elder: 'Elder' };
+const STAGE_ORDER = ['elder','adult','ya','teen','child','toddler','infant'];
+
+/* ===== HELPERS ===== */
+const $ = s => document.querySelector(s);
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+};
+const people = n => n === 1 ? '1 Sim' : n + ' Sims';
+const money = v => '§' + v.toLocaleString('en-US');
+const packName = id => (PACKS.find(p => p.id === id) || {}).name || '';
+
+let off = new Set(store.get('meldunek.off', []));
+const owned = p => !p || !off.has(p);
+const conflictSet = new Set(CONFLICTS.flatMap(([a, b]) => [a + '|' + b, b + '|' + a]));
+
+/* ===== ROLLING ===== */
+function rollTraits(stage) {
+  let pool;
+  if (stage === 'infant') pool = INFANT_TRAITS;
+  else if (stage === 'toddler') pool = TODDLER_TRAITS;
+  else {
+    pool = ALL_TRAITS.filter(t => owned(t.p)).map(t => t.n);
+    if (stage === 'child') pool = pool.filter(n => !ADULT_ONLY.has(n));
+  }
+  const out = [];
+  for (const t of shuffle(pool)) {
+    if (out.length >= TRAIT_COUNT[stage]) break;
+    if (out.some(o => conflictSet.has(o + '|' + t))) continue;
+    out.push(t);
+  }
+  return out;
+}
+
+function details(stage) {
+  const d = {};
+  if (['teen','ya','adult','elder'].includes(stage)) {
+    d.style = pick(STYLES);
+    const [like, dislike] = shuffle(LIKES);
+    d.like = like; d.dislike = dislike;
+    d.color = pick(COLORS);
+  } else if (stage === 'child') {
+    d.like = pick(LIKES.filter(l => !['gossip','programming'].includes(l)));
+    d.color = pick(COLORS);
+  }
+  return d;
+}
+
+function randSize(T) {
+  return T.min + Math.floor(Math.pow(Math.random(), 1.6) * (T.max - T.min + 1));
+}
+
+function kidStages(k) {
+  const out = []; let infants = 0;
+  for (let i = 0; i < k; i++) {
+    let s = pick(['infant','toddler','child','child','teen','teen']);
+    if (s === 'infant' && infants++ >= 1) s = 'toddler';
+    out.push(s);
+  }
+  return out;
+}
+
+function specsFor(type, n) {
+  const S = [];
+  if (type === 'single') S.push({ role: 'tenant', stage: pick(['ya','adult','elder']) });
+  if (type === 'couple') { const st = pick(['ya','adult','elder']); S.push({ role: 'partner', stage: st }, { role: 'partner', stage: st }); }
+  if (type === 'family' || type === 'parent') {
+    const adults = type === 'family' ? 2 : 1;
+    const kids = kidStages(n - adults);
+    const st = kids.includes('teen') ? 'adult' : pick(['ya','adult']);
+    for (let i = 0; i < adults; i++) S.push({ role: 'parent', stage: st });
+    kids.forEach(k => S.push({ role: 'child', stage: k }));
+  }
+  if (type === 'multi') {
+    const elders = n >= 5 ? pick([1, 2]) : 1;
+    const kids = Math.max(1, n - elders - 2);
+    const adults = n - elders - kids;
+    for (let i = 0; i < elders; i++) S.push({ role: 'grand', stage: 'elder' });
+    for (let i = 0; i < adults; i++) S.push({ role: 'parent', stage: 'adult' });
+    kidStages(kids).forEach(k => S.push({ role: 'child', stage: k }));
+  }
+  if (type === 'roommates') for (let i = 0; i < n; i++) S.push({ role: 'mate', stage: i === 0 && Math.random() < .4 ? 'adult' : 'ya' });
+  if (type === 'siblings') {
+    S.push({ role: 'eldest', stage: 'ya' });
+    for (let i = 1; i < n; i++) S.push({ role: 'sib', stage: pick(['toddler','child','child','teen','teen']) });
+  }
+  if (type === 'elders') {
+    S.push({ role: 'partner', stage: 'elder' }, { role: 'partner', stage: 'elder' });
+    if (n === 3) S.push({ role: 'child', stage: 'adult' });
+  }
+  return S.sort((a, b) => STAGE_ORDER.indexOf(a.stage) - STAGE_ORDER.indexOf(b.stage));
+}
+
+function buildMembers(type, n) {
+  const surname = pick(SURNAMES);
+  const used = new Set();
+  return specsFor(type, n).map(sp => {
+    const g = Math.random() < .5 ? 'f' : 'm';
+    const pool = namePool(g);
+    let name; do { name = pick(pool); } while (used.has(name) && used.size < pool.length);
+    used.add(name);
+    return { ...sp, g, name, surname: type === 'roommates' ? pick(SURNAMES) : surname, traits: rollTraits(sp.stage), ...details(sp.stage) };
+  });
+}
+
+function minLotIndex(n) { return n <= 2 ? 0 : n <= 4 ? 1 : n <= 6 ? 2 : 3; }
+
+function buildLot(n) {
+  const worlds = WORLDS.filter(w => owned(w[1]));
+  const [world, pack] = pick(worlds);
+  const minI = minLotIndex(n);
+  const sizeI = minI + Math.floor(Math.pow(Math.random(), 1.5) * (LOT_SIZES.length - minI));
+  const budgetPool = n >= 5 ? BUDGETS.slice(1) : BUDGETS;
+  const good = shuffle(LOT_TRAITS.filter(t => owned(t[1]))).slice(0, 1 + Math.floor(Math.random() * 2)).map(t => t[0]);
+  const hardPool = LOT_HARD.filter(t => owned(t[1]));
+  const hard = Math.random() < .45 && hardPool.length ? pick(hardPool)[0] : null;
+  return { world, pack, sizeI, budget: pick(budgetPool), traits: good, hard, building: pick(BUILDINGS), condition: pick(CONDITIONS) };
+}
+
+function resolveTypeAndSize() {
+  const tSel = $('#typeSel').value, sSel = $('#sizeSel').value;
+  let type, n, note = '';
+  if (tSel !== 'rand') {
+    type = tSel; const T = TYPES[type];
+    if (sSel !== 'rand') {
+      const want = +sSel;
+      n = Math.min(T.max, Math.max(T.min, want));
+      if (n !== want) note = `A ${T.label.toLowerCase()} household is ${T.min === T.max ? 'always ' + people(T.min) : T.min + ' to ' + T.max + ' Sims'}, so this one has ${people(n)}.`;
+    } else n = randSize(T);
+  } else if (sSel !== 'rand') {
+    n = +sSel;
+    type = pick(Object.keys(TYPES).filter(k => TYPES[k].min <= n && TYPES[k].max >= n));
+  } else {
+    type = pick(Object.keys(TYPES));
+    n = randSize(TYPES[type]);
+  }
+  return { type, n, note };
+}
+
+/* ===== STATE ===== */
+let state = store.get('movein.state', null);
+
+function newFamily(keepLot) {
+  const { type, n, note } = resolveTypeAndSize();
+  const members = buildMembers(type, n);
+  const story = { reason: pick(STORY.reason), secret: pick(STORY.secret), plan: pick(STORY.plan) };
+  let lot = keepLot && state ? state.lot : buildLot(n);
+  if (lot.sizeI < minLotIndex(n)) lot = { ...lot, sizeI: minLotIndex(n) };
+  return { type, members, story, lot, note };
+}
+
+function newHousehold() {
+  const nr = store.get('meldunek.nr', 41) + 1;
+  store.set('meldunek.nr', nr);
+  const f = newFamily(false);
+  state = { ...f, nr, date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) };
+}
+
+function save() { store.set('movein.state', state); }
+
+/* ===== RENDERING ===== */
+function roleOf(m) { return ROLES[m.role][m.g === 'f' ? 0 : 1]; }
+function stageOf(m) { return STAGES[m.stage]; }
+function titleOf() {
+  const m = state.members;
+  if (state.type === 'roommates') return 'Roommates';
+  if (state.type === 'single') return m[0].name + ' ' + m[0].surname;
+  return 'The ' + m[0].surname + ' Family';
+}
+
+function render() {
+  $('#serial').textContent = 'no. ' + String(state.nr).padStart(4, '0') + '/' + new Date().getFullYear();
+  $('#stampDate').textContent = state.date;
+  $('#hhTitle').textContent = titleOf();
+  $('#hhType').textContent = TYPES[state.type].label + ', ' + people(state.members.length);
+
+  const note = $('#note');
+  note.textContent = state.note || '';
+  note.hidden = !state.note;
+
+  $('#story').innerHTML = [
+    ['Why they moved', state.story.reason],
+    ['Unfinished business', state.story.secret],
+    ['Goal for year one', state.story.plan],
+  ].map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('');
+
+  const showSurname = state.type === 'roommates';
+  $('#members').innerHTML = state.members.map((m, i) => {
+    const extra = [];
+    if (m.style) extra.push(`style: <b>${esc(m.style)}</b>`);
+    if (m.like) extra.push(`likes: <b>${esc(m.like)}</b>`);
+    if (m.dislike) extra.push(`dislikes: <b>${esc(m.dislike)}</b>`);
+    if (m.color) extra.push(`color: <b>${esc(m.color)}</b>`);
+    return `<li class="member">
+      <span class="lp">${i + 1}.</span>
+      <div class="who"><span class="name">${esc(m.name)}${showSurname ? ' ' + esc(m.surname) : ''}</span><span class="role">${roleOf(m)} · ${stageOf(m)}</span></div>
+      <div class="traits">${m.traits.map(t => `<span class="chip">${esc(t)}</span>`).join('')}</div>
+      <button type="button" class="icon-btn" data-reroll="${i}" aria-label="Reroll traits for ${esc(m.name)}" title="Reroll traits">↻</button>
+      ${extra.length ? `<p class="extra">${extra.join(' · ')}</p>` : ''}
+    </li>`;
+  }).join('');
+
+  const L = state.lot;
+  $('#lotWorld').textContent = L.world;
+  $('#lotPack').textContent = L.pack ? packName(L.pack) : 'Base Game';
+  $('#lotFields').innerHTML = [
+    ['Lot size', 'about ' + LOT_SIZES[L.sizeI]],
+    ['Starting budget', money(L.budget)],
+    ['Lot traits', `<span class="traits">${L.traits.map(t => `<span class="chip">${esc(t)}</span>`).join('')}</span>`],
+    ['Lot challenge', L.hard ? `<span class="traits"><span class="chip hard">${esc(L.hard)}</span></span>` : 'none'],
+    ['Building', esc(L.building)],
+    ['Condition', esc(L.condition)],
+  ].map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+}
+
+function thunk() {
+  const s = $('#stamp');
+  s.classList.remove('thunk'); void s.offsetWidth; s.classList.add('thunk');
+}
+
+function asText() {
+  const L = state.lot, lines = [];
+  lines.push(`SIMS MOVE-IN CARD, ${$('#serial').textContent}`);
+  lines.push(`${titleOf()} (${TYPES[state.type].label.toLowerCase()}, ${people(state.members.length)})`);
+  lines.push('');
+  lines.push('Why they moved: ' + state.story.reason);
+  lines.push('Unfinished business: ' + state.story.secret);
+  lines.push('Goal for year one: ' + state.story.plan);
+  lines.push('', 'RESIDENTS');
+  state.members.forEach((m, i) => {
+    let l = `${i + 1}. ${m.name} ${m.surname}, ${roleOf(m).toLowerCase()}, ${stageOf(m).toLowerCase()}. Traits: ${m.traits.join(', ')}.`;
+    const ex = [];
+    if (m.style) ex.push('style: ' + m.style);
+    if (m.like) ex.push('likes: ' + m.like);
+    if (m.dislike) ex.push('dislikes: ' + m.dislike);
+    if (m.color) ex.push('color: ' + m.color);
+    if (ex.length) l += ' ' + ex.join(', ') + '.';
+    lines.push(l);
+  });
+  lines.push('', 'LOT');
+  lines.push(`World: ${L.world} (${L.pack ? packName(L.pack) : 'Base Game'})`);
+  lines.push('Lot size: about ' + LOT_SIZES[L.sizeI]);
+  lines.push('Starting budget: ' + money(L.budget));
+  lines.push('Lot traits: ' + L.traits.join(', '));
+  lines.push('Lot challenge: ' + (L.hard || 'none'));
+  lines.push('Building: ' + L.building);
+  lines.push('Condition: ' + L.condition);
+  return lines.join('\n');
+}
+
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 1700);
+}
+
+/* ===== PACKS ===== */
+function renderPacks() {
+  const groups = [...new Set(PACKS.map(p => p.g))];
+  $('#packGroups').innerHTML = groups.map(g => `
+    <div class="pack-group"><h4>${g}</h4><div class="pack-grid">
+      ${PACKS.filter(p => p.g === g).map(p => `<label><input type="checkbox" id="pk-${p.id}" data-pack="${p.id}" ${off.has(p.id) ? '' : 'checked'}> ${esc(p.name)}</label>`).join('')}
+    </div></div>`).join('');
+  updatePackCount();
+}
+function updatePackCount() {
+  const on = PACKS.filter(p => !off.has(p.id)).length;
+  $('#packCount').textContent = `(${on} of ${PACKS.length})`;
+}
+function setAllPacks(on) {
+  off = on ? new Set() : new Set(PACKS.map(p => p.id));
+  store.set('meldunek.off', [...off]);
+  renderPacks();
+}
+
+/* ===== START ===== */
+$('#typeSel').innerHTML = '<option value="rand">Random</option>' + Object.entries(TYPES).map(([k, t]) => `<option value="${k}">${t.label}</option>`).join('');
+$('#sizeSel').innerHTML = '<option value="rand">Random</option>' + [1, 2, 3, 4, 5, 6, 7, 8].map(n => `<option value="${n}">${n}</option>`).join('');
+$('#nameSel').innerHTML = '<option value="mix">Mixed</option>' + Object.entries(NAME_SETS).map(([k, s]) => `<option value="${k}">${s.label}</option>`).join('');
+const savedSel = store.get('meldunek.sel', null);
+if (savedSel) { $('#typeSel').value = savedSel.type || 'rand'; $('#sizeSel').value = savedSel.size || 'rand'; $('#nameSel').value = savedSel.names || 'mix'; }
+['#typeSel', '#sizeSel', '#nameSel'].forEach(s => $(s).addEventListener('change', () => store.set('meldunek.sel', { type: $('#typeSel').value, size: $('#sizeSel').value, names: $('#nameSel').value })));
+/* a saved household with names that are no longer in the lists gets replaced */
+if (state && state.members && !state.members.every(m => namePool(m.g).includes(m.name))) state = null;
+
+renderPacks();
+if (!state || !state.members || !state.lot || !TYPES[state.type]) { newHousehold(); save(); }
+render();
+
+$('#toolbar').addEventListener('submit', e => {
+  e.preventDefault();
+  newHousehold(); save(); render(); thunk();
+  $('#copyFallback').hidden = true;
+});
+$('#rerollFamily').addEventListener('click', () => {
+  const f = newFamily(true);
+  state = { ...state, ...f }; save(); render();
+});
+$('#rerollTraits').addEventListener('click', () => {
+  state.members.forEach(m => { m.traits = rollTraits(m.stage); }); save(); render();
+});
+$('#rerollLot').addEventListener('click', () => {
+  state.lot = buildLot(state.members.length); save(); render();
+});
+$('#members').addEventListener('click', e => {
+  const b = e.target.closest('[data-reroll]'); if (!b) return;
+  const m = state.members[+b.dataset.reroll];
+  m.traits = rollTraits(m.stage); save(); render();
+  const again = document.querySelector(`[data-reroll="${b.dataset.reroll}"]`); if (again) again.focus();
+});
+$('#packGroups').addEventListener('change', e => {
+  const id = e.target.dataset.pack; if (!id) return;
+  if (e.target.checked) off.delete(id); else off.add(id);
+  store.set('meldunek.off', [...off]); updatePackCount();
+});
+$('#packsAll').addEventListener('click', () => setAllPacks(true));
+$('#packsNone').addEventListener('click', () => setAllPacks(false));
+$('#copyBtn').addEventListener('click', () => {
+  const text = asText();
+  const fallback = () => { const ta = $('#copyFallback'); ta.value = text; ta.hidden = false; ta.focus(); ta.select(); toast('Text selected, copy it manually'); };
+  try {
+    navigator.clipboard.writeText(text).then(() => toast('Copied'), fallback);
+  } catch (err) { fallback(); }
+});
+</script>
+</body>
+</html>
